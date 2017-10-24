@@ -162,21 +162,7 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        # TODO implement
-#         new_state = FluentState([], [])
-#         kb = PropKB()
-# #        Set the current conditions that are true and are false and are decoded from the state
-#         kb.tell(decode_state(state, self.state_map).pos_sentence())
-# #        loop through the positive consequences of the action and check if they need to be added
-#         for clause in action.effect_add:
-#             if clause not in kb.clauses:
-#                 kb.tell(clause)
-# #        loop through the negative consequences of the action and check if they need to be removed
-#         for clause in action.effect_rem:
-#             if clause in kb.clauses:
-#                 kb.retract(clause)
-#         new_state.pos.append(kb.clauses)
-#         return encode_state(new_state, self.state_map)
+        #todo put documentation for this part
         new_state = FluentState([], [])
         old_state = decode_state(state, self.state_map)
         for fluent in old_state.pos:
@@ -232,9 +218,29 @@ class AirCargoProblem(Problem):
         """
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
         
-        
-        count = 2
-        return count
+        kb = PropKB()
+        actionCount=0
+#        check to see if any of the goals are already met and howmany unment goals are there
+        kb.tell(decode_state(node.state, self.state_map).pos_sentence())
+        for clause in self.goal:
+            if clause not in kb.clauses:
+                unmetGoals.append(clause)
+        #loop through each goal and try to find if there is an action that can meet it, if yes add 1 to action count
+        for goal in unmetGoals:
+            for action in self.actions_list:
+                if goal in action.effect_add:
+                    #since each action in this project only gives one positive result, we are not searching the possibilities of having a 
+                    #most optimal action that can solve multiple goals at once
+                    actionCount+=1
+                    break
+        return actionCount
+    
+def scoreAction(action, unmetGoals):
+            score=0
+            for goal in unmetGoals:
+                if goal in action.effect_add:
+                    score+=1
+            return score
 
 
 def air_cargo_p1() -> AirCargoProblem:
