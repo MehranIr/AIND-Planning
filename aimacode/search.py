@@ -4,11 +4,12 @@ The way to use this code is to subclass Problem to create a class of problems,
 then create problem instances and solve them with calls to the various search
 functions."""
 
+import sys
+
 from .utils import (
     is_in, memoize, print_table, Stack, FIFOQueue, PriorityQueue, name
 )
 
-import sys
 
 infinity = float('inf')
 

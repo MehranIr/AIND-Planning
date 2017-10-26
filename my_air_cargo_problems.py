@@ -1,3 +1,6 @@
+from functools import lru_cache
+from tkinter.constants import SEL
+
 from aimacode.logic import PropKB
 from aimacode.planning import Action
 from aimacode.search import (
@@ -9,11 +12,8 @@ from lp_utils import (
 )
 from my_planning_graph import PlanningGraph
 
-from functools import lru_cache
-from tkinter.constants import SEL
+
 # from sympy.physics.units.dimensions import action
-
-
 class AirCargoProblem(Problem):
     def __init__(self, cargos, planes, airports, initial: FluentState, goal: list):
         """
@@ -162,16 +162,19 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        #todo put documentation for this part
+        #This function adds the effects of the action that is being passed as the parameter to the state that the program was before the action 
+        # the result of the function is the new encoded state havign the action effects in mind
         new_state = FluentState([], [])
         old_state = decode_state(state, self.state_map)
         for fluent in old_state.pos:
+#if the new action has a negative effect on the fluent state which was previously positive, take it into account already and append as a positive condition
             if fluent not in action.effect_rem:
                 new_state.pos.append(fluent)
         for fluent in action.effect_add:
             if fluent not in new_state.pos:
                 new_state.pos.append(fluent)
         for fluent in old_state.neg:
+#if the new action has a positive effect on the fluent state which was previously negative, take it into account already and don't append as a negative condition
             if fluent not in action.effect_add:
                 new_state.neg.append(fluent)
         for fluent in action.effect_rem:
@@ -234,14 +237,6 @@ class AirCargoProblem(Problem):
                     actionCount+=1
                     break
         return actionCount
-    
-def scoreAction(action, unmetGoals):
-            score=0
-            for goal in unmetGoals:
-                if goal in action.effect_add:
-                    score+=1
-            return score
-
 
 def air_cargo_p1() -> AirCargoProblem:
     cargos = ['C1', 'C2']

@@ -310,7 +310,15 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
-
+        # print("this is level: "+str(level))
+        # print(self.all_actions)
+        self.a_levels.append(set())
+        for action in self.all_actions:
+            # for both conditions, we need to check the case whether all of the preconditions of the action is available in the
+            # current state and also have case if there is not precondition defined...
+            if all(value in self.fs.pos for value in action.precond_pos) or not action.precond_pos:
+                if all(value in self.fs.neg for value in action.precond_neg) or not action.precond_neg:
+                    self.a_levels[level].add(PgNode_a(action))
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph
 
@@ -328,6 +336,11 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
+        self.s_levels.append(set())
+        # looking at the effects of the last action level and putting each of the effects as a literal in the new state
+        for action in self.a_levels[(level-1)]:
+            for effect in action.effnodes:
+                self.s_levels[level].add(PgNode_s(effect.symbol, effect.is_pos))
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
@@ -386,6 +399,14 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Effects between nodes
+        #checks if each effect of node 1 depending on the case that is positive or negative, is countered by the node_a2
+        for effect in node_a1.effnodes:
+            if effect.is_pos: # positive case
+                if effect.symbol in node_a2.action.effect_rem:
+                    return True;
+            else: # negative case
+                if effect.symbol in node_a2.action.effect_add:
+                    return True
         return False
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:

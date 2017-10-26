@@ -1,7 +1,9 @@
 import argparse
-import shutil
 import os
+import shutil
+
 from udacity_pa import udacity
+
 
 nanodegree = 'nd889'
 projects = ['cargo_planning']

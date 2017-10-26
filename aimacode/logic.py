@@ -30,16 +30,15 @@ And a few other functions:
     diff, simp       Symbolic differentiation and simplification
 """
 
+from collections import defaultdict
+import itertools
+
 from .utils import (
     removeall, unique, first, isnumber, issequence, Expr, expr, subexpressions
 )
 
-import itertools
-from collections import defaultdict
 
 # ______________________________________________________________________________
-
-
 class KB:
 
     """A knowledge base to which you can tell and ask sentences.

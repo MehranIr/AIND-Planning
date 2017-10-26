@@ -1,21 +1,19 @@
 """Provides some utilities widely used by other modules"""
 
 import bisect
+from collections import defaultdict
 import collections
 import collections.abc
 import functools
+import heapq
+import math
 import operator
 import os.path
 import random
-import math
 
-import heapq
-from collections import defaultdict
 
 # ______________________________________________________________________________
 # Functions on Sequences and Iterables
-
-
 def sequence(iterable):
     "Coerce iterable to sequence, if it is not already one."
     return (iterable if isinstance(iterable, collections.abc.Sequence)
