@@ -89,7 +89,7 @@ class HaveCakeProblem(Problem):
         # from this node to the goal
         # requires implementation in PlanningGraph
         pg = PlanningGraph(self, node.state)
-        pg_levelsum = pg.h_levelsum()
+        pg_levelsum = pg.h_levelsum
         return pg_levelsum
 
     @lru_cache(maxsize=8192)
